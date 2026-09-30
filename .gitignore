@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+data/*.sqlite*
+test-results/
+.DS_Store
+.env
+.env.*
+!.env.example
+backups/
+submission/
+AIIA_CTMS_Research_Execution_Plan.md.pdf
+graphify-out/.graphify*
+graphify-out/manifest.json
+graphify-out/stage_*.json

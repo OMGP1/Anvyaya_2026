@@ -1,0 +1,7 @@
+{$ANVAYA_DOMAIN} {
+    request_body {
+        max_size 800KB
+    }
+    reverse_proxy app:8046
+    header Strict-Transport-Security "max-age=31536000"
+}

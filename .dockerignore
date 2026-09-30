@@ -1,0 +1,12 @@
+.venv
+__pycache__
+data
+docs
+graphify-out
+submission
+tests
+*.pdf
+.git
+.env
+.env.*
+backups

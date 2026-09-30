@@ -1,0 +1,15 @@
+Metric,Definition,Denominator,Owner,Refresh,Alert rule,MVP status,Interpretation limit
+Portfolio studies,Visible study count,Assigned scope,Leadership or PI,10 second polling,None,Implemented,Not AIIA actual study count
+Recruiting studies,Studies whose state is Recruiting,Visible studies,Research administrator,10 second polling,None,Implemented,Activation workflow represented by seeded state
+Cumulative enrolment,All enrolled participant records including withdrawals,Study target,PI,After mutation and polling,Compare with planned pace,Implemented,Not current active participant count
+Active participants,Participants with Enrolled state,Study participants,Coordinator,After mutation and polling,None,Calculated per study,Withdrawn records remain in cumulative count
+Recruitment pace,Actual divided by expected enrolment times 100,Linear expected enrolment by elapsed planned duration,PI,Polling,Below configurable percent default70,Implemented,Simple deterministic plan comparison not a forecast
+Visit completion,Completed due visits divided by all due noncancelled visits times100,Due visits excluding future visits cancelled after withdrawal,Coordinator and monitor,Polling,No automatic threshold in D0,Implemented,Not protocol window compliance or treatment adherence
+Pending initial SAEs,Serious events without recorded initial reporting step,Serious reports,PV and PI,Polling,Due in24h or overdue,Implemented,Recorded step does not prove recipient delivery
+Initial SAE turnaround,Actual initial recipient receipt minus applicable clock anchor,Applicable report obligations,PV,Event driven proposed,Per approved reporting rule,Planned,Requires independent dispatch and receipt evidence
+IEC days remaining,Approval expiry date minus current date,Approved date per study,IEC and PI,Polling,Within configurable days default30,Implemented,No universal one-year approval expiry assumption
+Open query age,Elapsed days since query opened,Open queries,Monitor,Polling,Age at least configurable days default7,Implemented,Closed query history retained
+Screen failure rate,Screen failed divided by screened,Screening records,PI,Daily proposed,Study-defined,Planned,Screening CRF and eligibility review not implemented
+Protocol deviation rate,Confirmed deviations divided by relevant visits or participant exposure,Protocol-defined denominator,Monitor,Daily proposed,Study-defined,Planned,Do not confuse missed visits with every protocol deviation
+Audit completeness,Committed relevant operations with audit event divided by committed relevant operations,Defined auditable operations,Quality lead,Test and review,Any missing event,Tested for implemented mutation paths,Read-access and denied-operation audit coverage not complete
+Interoperability conformance,Accepted payloads divided by validated payloads,Agreed profile validator cases,Integration lead,Per export or import,Any validation failure,Reference integrity tested,Full FHIR profile ABDM and CDISC validation planned

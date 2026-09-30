@@ -1,0 +1,54 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      CTMS_DB: /app/data/ctms.sqlite
+      CTMS_DEMO_LOGIN: ${CTMS_DEMO_LOGIN:-false}
+      CTMS_SECURE_COOKIE: "true"
+      CTMS_ADMIN_USERNAME: ${CTMS_ADMIN_USERNAME:-admin}
+      CTMS_ADMIN_PASSWORD: ${CTMS_ADMIN_PASSWORD:?Set a private bootstrap password of at least 12 characters}
+    volumes:
+      - clinical_data:/app/data
+    expose:
+      - "8046"
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    networks:
+      - backend
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      ANVAYA_DOMAIN: ${ANVAYA_DOMAIN:?Set the DNS hostname for this deployment}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      backend:
+        ipv4_address: 172.30.46.2
+      edge:
+volumes:
+  clinical_data:
+  caddy_data:
+  caddy_config:
+networks:
+  backend:
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.30.46.0/24
+  edge:
