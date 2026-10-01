@@ -277,3 +277,11 @@ Ask a coordinator to enrol in a blocked study and explain the rejection. Ask a P
 Extend tasks to an administrator assigning a named account, an independent reviewer rejecting their own approval attempt, a coordinator recording reconsent while preserving history, an import operator reconciling a duplicate/conflict and a PV user handling terminology abstention. Ask the user to distinguish lexical similarity from clinical confidence and manual receipt recording from externally verified delivery.
 
 Record success, completion time, misinterpretations and any need for help. Pay particular attention to false assumptions: “the app already sent the report”, “Prakriti is a diagnosis”, “the registry number was verified” and “export means certified interoperability”. Revise copy and interaction before adding features.
+
+## Operations & alerts — implemented 1 October
+
+The new navigation item reuses existing cards, tables, filters, forms and responsive scrolling. Four portfolio cards show assigned site count, monitoring due, open deviations and critical forecasts. The study/search filters narrow tables; card subtitles explicitly retain whole-assignment scope.
+
+The inbox displays severity, study/condition, rule and owning role. Configured thresholds appear beside an admin-only edit action. Enrolment forecasting displays probability, trailing-rate comparison, rate-based date and a nominal 90% count range, with constant-rate/synthetic boundaries visible. Tables show site metadata, monitoring findings, deviation corrective actions and formulation/batch context. Empty states are explicit; leaders receive aggregates without editable record tables.
+
+Forms reuse server validation and visible error messages. Site changes filter optional participants; the server independently verifies linkage. Future monitoring visits have no Complete action. Completed visits and closed deviations retain findings and reasons. The pre-inspection dialog fetches a fresh scoped summary and offers escaped HTML download guarded by the current session. It never displays a certification-style Ready verdict. [Desktop](screenshots/11-operations-alerts.png) and [mobile](screenshots/12-operations-mobile.png) are real browser captures.

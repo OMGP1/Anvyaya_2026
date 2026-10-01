@@ -251,4 +251,10 @@ The implemented browser paths are evidenced by [Access management](screenshots/0
 
 ## 15. Source context
 
+### Operations increment — 1 October
+
+Admin, PI, coordinator and monitor now hold the `operations` permission within their existing study assignments: site records/activation, monitoring schedule/completion and deviation capture/closure. Existing query roles can create as well as resolve queries. Ethics, PV and regulator can inspect scoped operation records without these mutation actions. Leadership receives counts/forecasts and redacted alerts; individual sites, monitoring and deviation arrays are withheld. This is a prototype access matrix, not an approved institutional delegation policy.
+
+Additional user tasks: a monitor records findings and corrective action; a coordinator interprets a forecast against its trailing-rate baseline; an administrator edits alert horizons; leadership reviews aggregate open work. All roles can generate a scoped aggregate pre-inspection report; audit verification remains limited to audit-authorised roles. No DSMB membership, clinician interview or verified usability outcome is implied.
+
 The role families and broad CTMS needs come from the user-supplied text of SIH 26046, associated with the [official SIH problem-statement listing](https://sih.gov.in/sih2026PS). The exact current permissions come from the local implementation, not from an assumed legal assignment of duties. The [CTRI FAQ](https://ctri.nic.in/Clinicaltrials/faq.php) supports the prospective-registration design context. Study-specific safety applicability should be checked against the [CDSCO NDCT rules and amendments](https://www.cdsco.gov.in/opencms/opencms/en/Acts-and-rules/New-Drugs/) and the approved protocol/SOP; the personas themselves are design hypotheses.

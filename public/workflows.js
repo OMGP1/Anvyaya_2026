@@ -36,6 +36,7 @@ async function workflowAction(action,el){const id=el.dataset.id;
     if(action==='inspect-import'){await showImportReview(id);return true;}
     if(action==='provenance-download'){await downloadPath('/api/export/provenance','source-provenance.csv');return true;}
     if(action==='check-exchange'){const r=await api('/api/exchange/check');modal('FHIR reference checks',`${r.resources} resources · ${r.references} references`,r.checks.map(c=>`<div class="metric-row"><span>${esc(c.name)}</span>${pill(c.passed?'Passed':'Failed',c.passed?'':'danger')}</div>`).join('')+`<p class="status-note">${esc(r.scope)}</p>`);return true;}
+    if(typeof operationsWorkflowAction==='function'&&await operationsWorkflowAction(action,el))return true;
     return typeof safetyWorkflowAction==='function'?await safetyWorkflowAction(action,el):false;
 }
 
@@ -51,6 +52,7 @@ async function workflowSubmit(form,fields){let path,body=fields,message='Saved w
     if(form.id==='reconsent-form'){path='/api/participants/'+form.dataset.id+'/reconsent';body={...fields,consent:form.elements.consent.checked};message='Current-version consent recorded; prior evidence retained.';}
     if(form.id==='import-form'){path='/api/imports/preview';let mapping;try{mapping=fields.mapping.trim()?JSON.parse(fields.mapping):undefined;}catch{throw Error('Field mapping must be valid JSON.');}body={study_id:fields.study_id,source_name:fields.source_name,csv_text:fields.csv_text,mapping,synthetic:form.elements.synthetic.checked};}
     if(form.id==='import-commit-form'){path='/api/imports/'+form.dataset.id+'/commit';body={...fields,reviewed:form.elements.reviewed.checked};message='Import committed. Existing source rows were not duplicated.';}
+    if(!path&&typeof operationsWorkflowSubmit==='function'&&await operationsWorkflowSubmit(form,fields))return true;
     if(!path)return typeof safetyWorkflowSubmit==='function'?await safetyWorkflowSubmit(form,fields):false;
     const result=await api(path,body);document.querySelector('#modal').close();await refresh(true);
     if(form.id==='import-form'||form.id==='import-commit-form')await showImportReview(result.record.id);

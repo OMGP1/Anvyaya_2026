@@ -1,6 +1,6 @@
 # ANVAYA — built and tested: presentation content
 
-**Updated:** 30 September 2026. **Problem statement:** SIH 26046. **Deliverable:** six slides of editable content, followed by speaker notes.
+**Updated:** 1 October 2026. **Problem statement:** SIH 26046. **Deliverable:** six slides of editable content, followed by speaker notes.
 
 ## Use this content with the supplied layouts
 
@@ -15,7 +15,7 @@ The architecture and claims match the application and its account, document, exc
 - **Screenshots:** [overview](screenshots/02-overview.png), [documents](screenshots/07-documents-amendments.png), [integration](screenshots/08-integration-evidence.png), [coding](screenshots/10-coding-followup.png), [mobile](screenshots/09-integration-mobile.png).
 - **Video:** include a link only if a walkthrough has been uploaded and opens for reviewers.
 
-Reference labels S1–S12, L1–L3 and V1 are local to this deck. Slide 6 gives their links. Sources establish requirements or design context; implementation files and tests establish what Anvaya does.
+Reference labels S1–S12, L1–L3, R1 and V1 are local to this deck. Slide 6 gives their links. Sources establish requirements or design context; implementation files and tests establish what Anvaya does. The [master strategy review](MASTER_STRATEGY_REVIEW.md) records delivered upgrades and the remaining acceptance gates. The forecast is a running, synthetically evaluated prototype; external connections and institutional approval remain separate.
 
 ---
 
@@ -57,7 +57,7 @@ A working clinical research workspace connecting reviewed evidence, participant 
 ### Upper right — UNIQUE VALUE PROPOSITIONS
 
 **Blue box — Ayurveda context in the workflow**  
-Study formulation and batch details connect with participant-level Prakriti records.
+Study formulation, configured batch and Prakriti remain visible beside study-level safety counts.
 
 **Red box — Readiness and reviewed amendments**  
 Readiness checks, independent document review and consent-version gates make missing evidence actionable.
@@ -65,19 +65,19 @@ Readiness checks, independent document review and consent-version gates make mis
 **Purple box — Attributable review**  
 Named users, independent approvals, consent history and audit hashes preserve who changed what and why.
 
-**Green box — Governed data exchange**  
-CSV staging checks mappings and duplicates; linked FHIR exports and provenance support reconciliation.
+**Green box — Actionable operational oversight**  
+Site monitoring, deviations and alert rules share one workspace, with a working enrolment forecast and visible uncertainty.
 
 ### Lower right — SOLUTION DELIVERED
 
 **UI Demo:** `[PUBLIC_UI_URL]` · **GitHub:** [View repository](https://github.com/OMGP1/Anvyaya_2026) · **Preview:** embed the overview screenshot
 
 1. **Study and evidence:** Six readiness checks, versioned documents, independent review and active-study amendments.
-2. **Participant operations:** Consent-checked enrolment, reconsent history, follow-up visits and withdrawal.
+2. **Study operations:** Sites, consent-checked enrolment, monitoring visits, deviations, queries and reconsent.
 3. **Safety workspace:** Conditional clocks, reviewed lexical coding suggestions and recorded dispatch/receipt follow-up.
 4. **Individual access:** Named accounts, eight roles, managed study assignments, password reset and session revocation.
 5. **Integration and exchange:** Reviewed CSV staging, duplicate protection, provenance, local FHIR checks and base-R4-tested exports.
-6. **Integrity and recovery:** Transactional audit history, chain verification, verified backup/restore tooling and deployment configuration.
+6. **Oversight and integrity:** Configurable alerts, synthetic forecast evaluation, HTML pre-inspection reports and verifiable audit history.
 
 **Footer:** Implemented workflows · Synthetic data · Documented integration and browser checks [V1]
 
@@ -117,7 +117,7 @@ Place boxes 1–5 down the left column and 6–10 up the adjacent column, follow
    FHIR resource/link checks, research JSON, DM/AE previews and provenance downloads.
 
 10. **Serving & Operations**  
-    Live KPIs; WSGI adapter with pinned Waitress and HTTPS reverse-proxy configuration.
+    Sites, monitoring, deviations and alert rules; Waitress WSGI and HTTPS configuration.
 
 ### Upper right — Architecture: Implemented Core + Partner Onboarding Design
 
@@ -132,9 +132,16 @@ flowchart TB
         API --> Commands
         Commands --> DB[(SQLite and transactional audit)]
         DB --> Outputs[Scoped KPIs, FHIR checks, exports and provenance]
+        DB --> Operations[Sites, monitoring, deviations and pre-inspection summary]
+        Operations --> UI
         DB --> Recovery[Verified backup and restore tooling]
         Outputs --> UI
     end
+    subgraph Analytics[SYNTHETICALLY EVALUATED PROTOTYPE]
+        Forecast[Study-level Gamma-Poisson forecast and count uncertainty]
+    end
+    DB --> Forecast
+    Forecast --> UI
     subgraph Partner[PARTNER ONBOARDING DESIGN]
         EDC[Authorised EDC or HIS] --> Auth[Partner-supported OAuth or SMART]
         Auth --> Adapter[Versioned adapter, source identity and reconciliation]
@@ -155,7 +162,7 @@ Readiness, independent amendments, current consent and withdrawal guards are exe
 Named permissions, study scope, revocation, stale edits and audit integrity are exercised.
 
 **Data and recovery checks**  
-Import retries, conflicts, provenance, FHIR links and backup/restore have explicit checks.
+Import reconciliation, site linkage, monitoring chronology, deviation closure and backup/restore have explicit checks.
 
 **Demonstration evidence**  
 Documented integration and browser checks identify tested workflows and current results. [V1]
@@ -179,6 +186,7 @@ Documented integration and browser checks identify tested workflows and current 
 - **Clinical rules:** Shared readiness and consent checks remain active when imported rows enter domain commands.
 - **Source reconciliation:** Explicit mappings, content hashes and source identifiers detect duplicate or conflicting rows.
 - **Reviewed terminology:** Deterministic lexical similarity ranks supplied terms; low matches abstain and named reviewers select codes.
+- **Explainable forecast:** Gamma–Poisson target probability and nominal 90% enrolment-count range, checked against a trailing-rate baseline on 300 synthetic studies. [R1, V1]
 - **Integrity and follow-up:** Hash-linked audit evidence, chronological reporting records and verified backup copies support review.
 
 ### Lower left — Operational Feasibility
@@ -188,7 +196,7 @@ Documented integration and browser checks identify tested workflows and current 
 3. **One partner at a time:** Validate an authorised EDC/HIS interface, source mapping, safe retries and reconciliation before expansion.
 4. **Governed standards release:** Obtain dictionary rights; approve SDTM mappings, transport, Define-XML and recipient validation.
 
-**Proof strip:** 59 automated test methods + 2 Chrome workflows passed · Local container smoke checks passed · Production acceptance path defined [V1]
+**Proof strip:** 69 automated test methods + 3 Chrome workflows passed · 300-study synthetic forecast evaluation · Production acceptance path defined [V1]
 
 ### Lower right — Capability Comparison
 
@@ -210,7 +218,7 @@ Documented integration and browser checks identify tested workflows and current 
 
 - **Investigators and coordinators:** Inspect enrolment, consent, due visits and unresolved queries together.
 - **Ethics and PV users:** Independently review evidence, terminology selections and recipient follow-up.
-- **Monitors and reviewers:** Inspect assigned records, source provenance, review decisions and audit history.
+- **Monitors and reviewers:** Schedule monitoring, record findings, close deviations and inspect scoped pre-inspection reports.
 
 **Lower box — Institutional Research**
 
@@ -279,6 +287,7 @@ Use the template's four reference boxes. Hyperlink the source titles; keep long 
 2. **[S10] Partner authentication design:** [OAuth 2.0 client credentials](https://www.rfc-editor.org/rfc/rfc6749#section-4.4) and [SMART Backend Services](https://hl7.org/fhir/smart-app-launch/backend-services.html).
 3. **[S11] Terminology governance:** [MedDRA term-selection guidance](https://files.meddra.org/www/Website%20Files/PtCs/001329_termselptc_r4_26_mar2026%20%281%29.html) and [UMC WHODrug Global](https://who-umc.org/whodrug/whodrug-global/what-is-whodrug-global/).
 4. **[V1] Implementation evidence:** [GitHub repository](https://github.com/OMGP1/Anvyaya_2026) · [Validation record](VALIDATION.md) · UI: `[PUBLIC_UI_URL]`.
+5. **[R1] Recruitment modelling:** [Time-dependent Poisson–Gamma research](https://arxiv.org/abs/2301.03710) · [Our synthetic evaluation](validation/forecast-evaluation.json). Our model is a simpler study-level prototype.
 
 **Footer:** Development data: generated synthetic studies and participants · Official sources: requirements and standards references
 
@@ -310,7 +319,9 @@ Use the template's four reference boxes. Hyperlink the source titles; keep long 
 
 ### Slide 4 — approximately 50 seconds
 
-“Feasibility is supported by a delivered operating base and specific acceptance gates. We have individual accounts, reviewed records, import controls, a WSGI serving option and verified recovery tooling. The current verification includes 59 automated test methods, two Chrome workflows and local container smoke checks. Compose and Caddy configuration validation passed. The dated validation record identifies their scope. Institutional operation still needs approved hosting, identity federation where required, a retention schedule, security assessment, measured recovery and an accountable operating team.”
+“Feasibility is supported by a delivered operating base and specific acceptance gates. We have individual accounts, reviewed records, import controls, a WSGI serving option and verified recovery tooling. The current functional verification includes 69 automated test methods and three Chrome workflows. Operations adds sites, monitoring, deviations, query creation, visible thresholds and an HTML pre-inspection report. The dated validation record distinguishes these checks from earlier container verification. Institutional operation still needs approved hosting, identity federation where required, a retention schedule, security assessment, measured recovery and an accountable operating team.”
+
+“The forecast is running and evaluated on 300 synthetic studies. With a constant rate, its nominal 90% interval covers 91.33% of outcomes in the simulation. After an unforeseen 50% slowdown, coverage falls to 24%. The point forecast performs similarly to the trailing-rate baseline. We show these limits because an operational estimate must expose its assumptions. It is not a clinically validated predictor, a dropout model or evidence of improved recruitment.”
 
 “A PostgreSQL migration is justified by agreed concurrency and availability needs, not by presentation terminology. Its acceptance should reconcile identifiers, document checksums and unchanged audit payload bytes, exercise failed transactions and rehearse rollback. Our comparison describes connected behaviour relative to separate files. It does not imply that established CTMS or EDC products lack audit or access controls.”
 
@@ -323,6 +334,12 @@ Use the template's four reference boxes. Hyperlink the source titles; keep long 
 “Clinical guidance explains the controls; CDISC and FHIR define different data deliverables; MedDRA and WHODrug serve different coding tasks. OAuth and SMART inform a partner-specific connection design. MHRA is an international integrity reference, not Indian law. DPDP and CERT-In inform operations; none of these sources certifies our application. The repository and dated validation record establish implementation evidence.”
 
 ## Precise answers to likely technical questions
+
+**What did the master strategy add to the working website?** An Operations & alerts page with site creation/activation, site-aware enrolment, scheduled monitoring and findings, deviations and corrective-action closure, query creation, visible configurable rules, a study-level forecast with uncertainty and a scoped HTML pre-inspection report. The functions share existing permissions and transactional audit history. [Strategy review](MASTER_STRATEGY_REVIEW.md)
+
+**Are the batch counts a safety signal?** They are descriptive study-level counts beside a configured formulation/batch. We do not have verified individual exposure or event-to-batch attribution, so we do not calculate PRR/ROR, compare causal risk across unrelated trials or claim confirmed batch safety signals.
+
+**Is there a local LLM or complete SDTM export now?** The implemented coding assistant remains lexical with named human review. Local reranking, licensed dictionary scale-up, exposure collection, full SDTM/Define-XML, ODM ingestion, electronic signatures and external audit checkpoints have documented acceptance gates. They are not advertised as completed integrations.
 
 **Which datasets did you use?** We generated synthetic studies, participants, visits and safety records locally. CTRI, CDISC, HL7 FHIR R4 and ABDM sources informed the research and design. We did not import participant datasets or public trial records from those sources, and do not describe locally generated records as official clinical data.
 

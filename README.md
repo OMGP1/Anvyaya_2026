@@ -1,6 +1,6 @@
 # Anvaya — AIIA clinical-trial workspace
 
-Working synthetic-data MVP and detailed research for **SIH 2026, problem statement 26046**. Updated 30 September 2026. Product name is provisional. No PowerPoint or PDF was generated; presentation content is editable Markdown.
+Working synthetic-data MVP and detailed research for **SIH 2026, problem statement 26046**. Updated 1 October 2026. Product name is provisional. No PowerPoint or PDF was generated; presentation content is editable Markdown.
 
 ## Presentation and research
 
@@ -9,6 +9,7 @@ Working synthetic-data MVP and detailed research for **SIH 2026, problem stateme
 3. [Research findings and corrections to the supplied plan](docs/RESEARCH_FINDINGS.md).
 4. [Five production gaps: clinical rationale, SDTM, cloud, EDC and coding](docs/PRODUCTION_GAP_ANALYSIS.md).
 5. [Primary-source register](docs/SOURCES.md).
+6. [Master strategy review, delivered operations and measured forecast limits](docs/MASTER_STRATEGY_REVIEW.md).
 
 ## Run the working prototype
 
@@ -45,6 +46,10 @@ The database is seeded only when empty. A fresh dataset has six studies, 100 par
 - Study-specific initial/analysis clocks, assigned recipient obligations, recorded external dispatch/receipt and escalation.
 - Versioned terminology-package import, lexical suggestions and named reviewer approval; fictional demo terms, no bundled licensed dictionary.
 - Configurable operational alerts.
+- Site register/activation, site-aware enrolment, monitoring visits/findings, deviations/corrective actions and query creation.
+- Operations alert inbox, rule thresholds and scoped HTML pre-inspection summaries.
+- Study-level enrolment forecast, nominal count uncertainty and trailing baseline, with a reproducible 300-study synthetic evaluation.
+- Descriptive study safety counts beside configured formulation/batch context; individual exposure is unverified.
 - Attributable change history, append-only audit triggers and SHA-256 chain verification.
 - FHIR R4 research JSON, local reference checks, DM/AE mapping-preview CSV and provenance downloads.
 - Verified backup/restore CLI, Waitress WSGI runtime and tested Docker/HTTPS configuration.
@@ -85,7 +90,7 @@ python3 -m venv .venv
 .venv/bin/python tests/run_checks.py --browser
 ```
 
-Verified: **59 test methods and two browser workflows pass**. Docker builds and its local HTTP smoke checks pass; Compose and Caddy configuration validation pass. See [VALIDATION.md](docs/VALIDATION.md) for scope and external standards boundaries. Tests open loopback ports and preserve the main database.
+Verified: **69 test methods and three browser workflows pass**. See [VALIDATION.md](docs/VALIDATION.md) for dated runtime/container evidence and external standards boundaries. Tests open loopback ports and preserve the main database. Reproduce the synthetic forecast evaluation with `.venv/bin/python scripts/evaluate_forecasts.py`; both stable-rate and slowdown results are reported.
 
 ## Demonstration boundaries
 

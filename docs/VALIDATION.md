@@ -1,6 +1,6 @@
 # Validation evidence
 
-**Updated 30 September 2026. Result: 59 automated test methods and two Chrome workflows pass.** The final full suite ran after the account-revocation race fix, FHIR narrative update and interface changes. Every test uses isolated synthetic storage; the main demonstration database is preserved.
+**Updated 1 October 2026. Result: 69 automated test methods and three Chrome workflows pass.** The Operations increment adds ten regression methods and a browser workflow to the earlier account/evidence/import/safety checks. Every test uses isolated synthetic storage; the main demonstration database is preserved. Container and official FHIR results below retain their original scope and date.
 
 ## Reproduce the functional checks
 
@@ -18,9 +18,10 @@ The browser tests require installed Google Chrome. Checks start local listeners;
 | `test_documents.py` | 7 | Named upload, file size/type/path checks, immutable versions, independent review, amendments, stale approval, reconsent and preserved source history |
 | `test_exchange.py` | 11 | Mapping/CSV validation, exact source hashing, row findings, idempotent retries, changed-source conflicts, atomic rollback, readiness/consent rechecks, scope, formula-safe provenance and local FHIR checks |
 | `test_safety_workflow.py` | 7 | Dictionary release validation, supplied-code lookup, lexical candidates/abstention, named review, preserved narrative/history, recipient scope, chronology and duplicate-action guards |
+| `test_study_operations.py` | 10 | Site activation/enrolment, monitoring chronology, deviation linkage/CAPA, query creation/alerts, scoped aggregates, HTML report data, idempotent migration preservation, descriptive batch counts and forecast mathematics/holdout exclusion |
 | `test_ops.py` | 5 | Online backup including WAL, verified restore to a new path, no overwrite, restrictive permissions and rejection of corrupted/audit-tampered copies |
 | `test_runtime.py` | 3 | Same handlers under Waitress WSGI: assets, health/security headers, authenticated mutations, scope, exports, cross-origin rejection and oversized request rejection |
-| **Total** | **59** | Multiple assertions per method; no percentage coverage claim |
+| **Total** | **69** | Multiple assertions per method; no percentage coverage claim |
 
 ## Browser evidence
 
@@ -32,6 +33,8 @@ Screenshots are saved in `docs/screenshots/`. They show temporary test records, 
 
 ## Official FHIR validation
 
+The export builder is unchanged by the Operations increment. The following records the 30 September validation run; no additional profile or terminology acceptance is inferred.
+
 HL7 Java validator **6.10.4**, base **R4 4.0.1**, checked a fresh synthetic export containing **306 resources**. The final run exited 0 with **0 errors, 0 fatal issues, 100 warnings and 100 information messages**. Generated XHTML narratives removed the earlier missing-narrative warnings.
 
 The remaining warnings concern text-only `Consent.policyRule`; the informational messages concern terminology bindings because `-tx n/a` disables the terminology service. The final cached replay also used `-no-http-access`. These limits are part of the result. This does not demonstrate ABDM profile/sandbox acceptance or a fully validated terminology/submission package.
@@ -39,6 +42,8 @@ The remaining warnings concern text-only `Consent.policyRule`; the informational
 See [FHIR_VALIDATION.md](FHIR_VALIDATION.md), [raw OperationOutcome](validation/fhir-output.json) and [reproducible runner](../scripts/validate_fhir.py).
 
 ## Deployment and recovery evidence
+
+The container/Compose/Caddy checks in this list were performed on 30 September. New operations code is included in the Docker build context; current runtime checks exercise it through the same handlers. Additional container evidence, when run, is recorded separately.
 
 - Docker Desktop built `anvaya-ctms:verified` successfully using Python 3.12 and Waitress 3.0.2.
 - A temporary container ran with a read-only root filesystem, ephemeral synthetic database, non-root user, dropped capabilities and loopback-only port 18046. Health, login, seeded record count, FHIR reference checks and audit verification passed.
@@ -61,5 +66,17 @@ The configured proxy address is explicitly trusted for forwarded client identity
 ## Boundaries
 
 These checks establish the documented software behaviours on synthetic records. They are not clinical-system validation, a penetration-test certificate, a comprehensive accessibility review or a workload/availability benchmark. No measured clinical benefit, trained-model accuracy, licensed terminology correctness, full SDTM/ADaM/Define-XML conformity, real EDC/HIS/CTRI integration, automatic regulatory delivery, validated electronic signature or approved institutional cloud is claimed.
+
+## Operations and forecast evidence — 1 October
+
+`test_browser_operations.py` passes site creation/activation, monitoring planning/completion, deviation capture/CAPA closure, query creation/resolution, threshold editing, scoped pre-inspection HTML download and mobile containment without JavaScript errors. Screenshots: [desktop](screenshots/11-operations-alerts.png), [mobile](screenshots/12-operations-mobile.png). Download checks verify study scope and absence of session credentials.
+
+The migration test compares original study, participant and event rows byte-for-byte, checks that restarting an existing database does not inject monitoring/deviation examples, and verifies unchanged audit head on a second initialisation. Historical participant payloads are preserved; legacy records resolve to the explicit primary site when needed.
+
+The local service was backed up to `backups/pre-operations-upgrade-20261001.sqlite` before restart. Direct comparison after migration found zero changed study, participant or event payloads, six primary sites and a valid 33-entry audit chain (26 entries before migration). Backup/database files remain excluded from publication.
+
+The updated Docker image `anvaya-ctms:operations-verified` built successfully. A temporary container with a read-only root, ephemeral data directory, non-root user and dropped capabilities passed login, six-site/four-forecast snapshot, Operations asset and scoped inspection/audit checks, then was removed. This confirms the updated package runs; it does not establish public hosting or institutional acceptance.
+
+The synthetic forecast evaluation contains 300 studies with a 56-day observation period and separate 28-day holdout. Constant-rate interval coverage is 91.33%; an unforeseen 50% slowdown reduces coverage to 24%. Full probability/count errors, prior revision and baseline results are in [MASTER_STRATEGY_REVIEW.md](MASTER_STRATEGY_REVIEW.md), [current JSON](validation/forecast-evaluation.json) and [retained diagnostic](validation/forecast-prior-diagnostic.json). These results demonstrate assumptions and failure modes, not validated recruitment performance.
 
 The exact production acceptance work is documented in [PRODUCTION_GAP_ANALYSIS.md](PRODUCTION_GAP_ANALYSIS.md) and [DEPLOYMENT.md](DEPLOYMENT.md).

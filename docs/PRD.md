@@ -1,6 +1,6 @@
 # Anvaya — Product Requirements Document
 
-**Version:** 1.1 · **Date:** 30 September 2026 · **Problem:** SIH 26046  
+**Version:** 1.2 · **Date:** 1 October 2026 · **Problem:** SIH 26046  
 **Audience:** student team, reviewers, future AIIA product owner, research operations and compliance stakeholders.  
 **Working product name:** Anvaya. Team and college identity are intentionally unspecified.
 
@@ -183,7 +183,7 @@ Every indicator should answer three questions: what happened, what record explai
 
 ## 11. Validation and release gates
 
-The 30 September 2026 verification run passes **59 automated test methods across API, accounts, documents, exchange, safety workflow, recovery and runtime suites, plus two Chrome workflow scripts**. Tests use isolated databases. The checks cover the original enrolment/safety/audit paths and the added named access, independent reviews, amendments/reconsent, import reconciliation, coding, recipient follow-up and recovery behaviours. This count describes test methods, not percentage coverage or the number of clinical scenarios validated. Results and commands belong in [VALIDATION.md](VALIDATION.md).
+The 1 October 2026 verification passes **69 automated test methods across eight suites, plus three Chrome workflow scripts**. Tests use isolated databases. They cover enrolment/safety/audit, named access, evidence/amendments/reconsent, import reconciliation, coding/follow-up, recovery and the Operations increment below. This count describes methods, not percentage coverage or clinical scenarios validated. Results and commands belong in [VALIDATION.md](VALIDATION.md).
 
 The Docker image build and smoke checks, Compose configuration and Caddy configuration validation also pass. This verifies a runnable deployment package, not actual public hosting, certificate issuance, a live TLS endpoint or institutional cloud approval.
 
@@ -205,3 +205,18 @@ Before a pilot: approve protocol/SOP mappings, user access matrix and privacy ba
 8. Which external integrations can provide a sandbox and data-sharing agreement?
 
 The research pack supplies a defensible initial design. These unresolved questions must not be relabelled as completed institutional discovery.
+
+## 13. Master-strategy increment: delivered acceptance
+
+| User need | Implemented acceptance and limit |
+|---|---|
+| Manage study sites | Admin, PI, coordinator and monitor can create site records and activate a Setup site only for a ready Recruiting study. Study activation enables its primary site. Enrolment requires a matching active site and all existing gates. Site target is a planning field. |
+| Schedule oversight | Record site, date, monitor and scope; complete on/after that date with findings and reason. Repeated completion and cross-study site references are rejected. |
+| Track deviations | Record Major/Minor category, owner and nonfuture occurrence; optional participant must belong to study/site. Closure requires corrective/preventive action and reason. Clinical impact remains a human assessment. |
+| Raise data queries | Existing query roles create scoped discrepancies and resolve them once. Ageing alerts use the configured threshold. |
+| Understand alerts | Inbox displays condition, severity, study, rule and owning role. Admin changes five thresholds. No notification delivery, acknowledgment queue or delegated assignment system is implied. |
+| Review operational forecasts | Show study-level target probability, nominal 90% additional-count interval, mean-rate completion date and trailing baseline. Label constant-rate assumptions and synthetic evaluation. No clinical decision or dropout scoring. |
+| Prepare an inspection discussion | Generate a scoped snapshot of consent, readiness, approvals, safety follow-up, monitoring, deviations, queries and permitted audit status. Download aggregate HTML; never label absence of recorded issues as certified readiness. |
+| Inspect Ayurveda safety context | Show configured formulation/batch with study AE counts. Do not infer participant exposure, PRR/ROR or batch causality. |
+
+Leadership retains counts/forecasts without site-personnel or deviation narratives. Existing records survive the additive migration; only a fresh demonstration dataset receives example monitoring/deviations. Further master-strategy items and external acceptance gates are recorded in [MASTER_STRATEGY_REVIEW.md](MASTER_STRATEGY_REVIEW.md).

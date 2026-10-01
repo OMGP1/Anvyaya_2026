@@ -238,3 +238,13 @@ The six-hour duty discussed in the hosting research concerns specified cyber inc
 ## Updated answer: official FHIR validation
 
 The official HL7 Java validator 6.10.4 checked the fresh synthetic 306-resource export against base R4 4.0.1 with zero errors/fatals. There are 100 text-only consent-policy warnings and 100 notices because terminology service validation was disabled. The final cached run disabled HTTP. We preserve these findings and make no ABDM, terminology, clinical-system or certification claim. The command, hashes and unmodified outcome are in [FHIR_VALIDATION.md](FHIR_VALIDATION.md).
+
+## Operations addition: short judge walkthrough
+
+Open **Operations & alerts**. Explain an alert's rule and owner, then show a scheduled monitoring visit, recorded findings, a deviation and corrective action. Add a query and resolve it through Data quality. Filter one study and download its pre-inspection HTML. These records use existing permissions and transactional audit.
+
+**How accurate is the forecast?** It is a constant-rate study-level prototype with synthetic holdouts. The nominal 90% count interval covered 91.33% of constant-rate outcomes but only 24% after an unforeseen 50% slowdown. Point forecasts were similar to the trailing-rate baseline. This exposes limitations; it is not clinical validation or superior recruitment performance.
+
+**Why no batch PRR?** The batch is study metadata. Verified participant exposure and comparable coded product/event report counts are absent. The delivered table is descriptive study context; it does not infer causality or equate enrolment with exposure.
+
+**What remains from the master strategy?** Sites, monitoring, deviations, query creation, rules/inbox, forecast and HTML report work. Local LLM reranking, licensed dictionary scale-up, exposure capture, full SDTM/Define-XML, ODM ingestion, validated signatures and independent checkpoints have documented acceptance gates. Public hosting needs an authorised host and domain. See [MASTER_STRATEGY_REVIEW.md](MASTER_STRATEGY_REVIEW.md).

@@ -1,0 +1,26 @@
+{
+  "seed": 26047,
+  "observed_days": 56,
+  "holdout_days": 28,
+  "synthetic_studies": 300,
+  "method": "Study-level Gamma(0.5, rate 0.5 days) prior + Poisson likelihood; negative-binomial posterior prediction",
+  "data_separation": "Only dates at or before the cutoff enter the forecast; holdout counts are used only for scoring.",
+  "scenarios": {
+    "constant_rate": {
+      "studies": 150,
+      "target_probability_brier_score": 0.1456,
+      "future_count_mae": 5.77,
+      "trailing_rate_count_mae": 5.78,
+      "nominal_90_percent_interval_coverage": 0.9133
+    },
+    "unseen_50_percent_slowdown": {
+      "studies": 150,
+      "target_probability_brier_score": 0.3117,
+      "future_count_mae": 17.5691,
+      "trailing_rate_count_mae": 17.6333,
+      "nominal_90_percent_interval_coverage": 0.24
+    }
+  },
+  "prior_review": "An initial diagnostic with seed 26046 showed excessive shrinkage from the Gamma(1,14) prior. This independent seed evaluates the revised weaker prior; the initial result is retained in forecast-prior-diagnostic.json.",
+  "limitations": "Simulation checks method behaviour, not clinical validity. Stationarity violations can degrade forecasts; no superiority claim."
+}

@@ -1,0 +1,25 @@
+{
+  "seed": 26046,
+  "observed_days": 56,
+  "holdout_days": 28,
+  "synthetic_studies": 300,
+  "method": "Study-level Gamma(1, rate 14 days) prior + Poisson likelihood; negative-binomial posterior prediction",
+  "data_separation": "Only dates at or before the cutoff enter the forecast; holdout counts are used only for scoring.",
+  "scenarios": {
+    "constant_rate": {
+      "studies": 150,
+      "target_probability_brier_score": 0.1873,
+      "future_count_mae": 8.6347,
+      "trailing_rate_count_mae": 5.58,
+      "nominal_90_percent_interval_coverage": 0.6867
+    },
+    "unseen_50_percent_slowdown": {
+      "studies": 150,
+      "target_probability_brier_score": 0.155,
+      "future_count_mae": 11.872,
+      "trailing_rate_count_mae": 18.7733,
+      "nominal_90_percent_interval_coverage": 0.4467
+    }
+  },
+  "limitations": "Simulation checks method behaviour, not clinical validity. Stationarity violations can degrade forecasts; no tuning or superiority claim."
+}

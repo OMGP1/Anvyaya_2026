@@ -2,7 +2,7 @@ FROM python:3.12-slim
 WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
-COPY server.py accounts.py documents.py exchange.py safety_workflow.py wsgi.py ops.py ./
+COPY server.py accounts.py documents.py exchange.py safety_workflow.py study_operations.py wsgi.py ops.py ./
 COPY public ./public
 RUN useradd --uid 10001 --create-home anvaya && mkdir /app/data && chown anvaya:anvaya /app/data
 USER anvaya

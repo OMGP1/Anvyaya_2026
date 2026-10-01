@@ -411,3 +411,26 @@ A reporting user records a recipient, phase, eligible named assignee, explicit d
 ### Serving and recovery
 
 The same request/domain handlers run under local HTTP or Waitress WSGI. Docker/Compose supplies a deployment configuration with an HTTPS proxy and persistent volume. A health read detects database availability; an operator must connect it to monitoring. Online backup includes committed WAL records and verifies database integrity/audit linkage. Restore always creates a new file, leaving application switchover explicit. See [DEPLOYMENT.md](DEPLOYMENT.md).
+
+## Operations workflows — delivered 1 October
+
+```mermaid
+flowchart LR
+    Site[Site Setup] -->|Study ready and Recruiting + reason| Active[Active site]
+    Active -->|Current consent and all existing gates| Enrol[Participant enrolment]
+    Plan[Plan monitoring] -->|Scheduled date reached + findings/reason| Done[Completed monitoring]
+    Open[Record deviation] -->|Corrective action + reason| Closed[Closed deviation]
+    Query[Open data query] -->|Resolution evidence| Resolved[Resolved query]
+    Plan --> Alerts[Derived alert inbox]
+    Open --> Alerts
+    Query --> Alerts
+    Enrol --> Forecast[Study-level forecast + nominal uncertainty]
+    Forecast --> Alerts
+    Done --> Audit[Transactional audit history]
+    Closed --> Audit
+    Resolved --> Audit
+```
+
+All transitions validate role/study scope. Participant links must match the site. Future occurrence and early monitoring completion are rejected; repeated completion/closure cannot overwrite earlier evidence. Primary-site activation is included in study activation. An omitted site from legacy enrolment/import resolves to the primary site only.
+
+The pre-inspection flow is: select study/scope → authorised read of saved records → aggregate consent/readiness/approval/safety/monitoring/deviation/query checks → permitted full-chain verification → inspect/download HTML. Counts may overlap and missing external evidence is not treated as verified. Leadership can inspect aggregate counts even though detailed record arrays are withheld.

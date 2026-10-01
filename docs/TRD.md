@@ -1,6 +1,6 @@
 # Anvaya — Technical Requirements and Architecture
 
-**Version:** 1.1 · **Date:** 30 September 2026  
+**Version:** 1.2 · **Date:** 1 October 2026  
 Companion documents: [PRD](PRD.md), [regulatory traceability](REGULATORY_TRACEABILITY.csv), [workflows](WORKFLOWS.md), [sources](SOURCES.md).
 
 ## 1. Architecture decision
@@ -346,7 +346,7 @@ For a real deployment, verify an institution-approved India-resident offering, s
 
 ## 11. Technical acceptance
 
-On **30 September 2026**, the full verification run passes **59 automated test methods across seven suites and two Chrome workflow scripts**. The suites cover core/API behaviour, accounts, documents/amendments, exchange, safety workflow, operational recovery and WSGI runtime. The account suite now contains 11 methods. The count refers to methods and scripts, not percentage coverage. The Docker image build/smoke and Compose/Caddy configuration checks also pass. The separately completed official HL7 validator result and its remaining warnings/terminology limits are recorded in section 9 and [FHIR_VALIDATION.md](FHIR_VALIDATION.md). See [VALIDATION.md](VALIDATION.md) for application run evidence and commands.
+On **1 October 2026**, verification passes **69 automated test methods across eight suites and three Chrome workflows**. The suites cover core/API, accounts, documents/amendments, exchange, safety, study operations, recovery and WSGI runtime. Counts describe methods/scripts, not percentage coverage. Earlier container/Compose/Caddy evidence and the official HL7 result retain their dated scope in [VALIDATION.md](VALIDATION.md) and [FHIR_VALIDATION.md](FHIR_VALIDATION.md).
 
 ```sh
 .venv/bin/python tests/run_checks.py --browser
@@ -363,6 +363,29 @@ Tests run against isolated temporary databases, preserving the working demonstra
 - Strict CSV mapping/row checks, rejected batches, source conflicts, repeat-import protection, commit-time enrolment gates and source provenance.
 - Occurrence-based safety timers, lexical suggestion/abstention and named coding decisions; dictionary bounds/licence declaration; assigned recipients, actual-time guards, receipts and escalation states.
 - Scoped FHIR/CSV exports and local reference checks; audit triggers and broken-chain detection; WAL-inclusive backups, safe restoration and WSGI transport behaviour.
-- Two Chrome workflows exercising operational paths, downloads, failures and responsive navigation, including the added access/evidence/import/safety screens.
+- Three Chrome workflows exercising operational paths, downloads, failures and responsive navigation, including access/evidence/import/safety and Operations screens.
 
 Capacity and reliability targets require a measured workload and an approved operating context; no throughput, concurrency, uptime or recovery-time claim follows from these tests. Comprehensive accessibility, penetration testing, clinical adjudication, licensed-terminology acceptance, validated electronic signatures, complete terminology/receiving-profile validation, partner acceptance and real cloud security acceptance remain separate gates.
+
+## 12. Study operations implementation — 1 October
+
+`study_operations.py` reuses core authorization, validation, JSON-row storage and transactional audit functions. Additional tables are `sites`, `monitoring_visits` and `deviations`; queries reuse the original table. `operations` permission belongs to admin/PI/coordinator/monitor; query actions retain `query` permission. Scope remains per study, not per site. Site target totals are descriptive and do not replace the study capacity gate.
+
+| Endpoint | Rule |
+|---|---|
+| `POST /api/sites` | Unique code per study; required metadata/reason; Active creation requires study readiness and Recruiting status |
+| `POST /api/sites/{id}/activate` | Setup only; study readiness/recruiting gate; audited transition |
+| `POST /api/monitoring-visits` | Study/site relationship, monitor, scope, date and reason |
+| `POST /api/monitoring-visits/{id}/complete` | Planned only, scheduled date reached, findings and reason |
+| `POST /api/deviations` | Study/site/optional participant consistency; occurrence cannot be future |
+| `POST /api/deviations/{id}/close` | Open only; corrective action and reason |
+| `POST /api/queries` | Query permission, study scope, field/message/reason |
+| `GET /api/operations/inspection?study={id}` | Authorised study or whole assigned scope; aggregate checks, current-consent denominator and permitted full-chain verification |
+
+All mutations run inside the existing lock/transaction, saving audit and operational records together. `GET /api/data` includes scoped operations, forecasts, descriptive batch context and computed alerts. Leadership receives operation counts, forecasts and non-narrative alerts, with site/monitor/deviation arrays removed. Inspection counts are computed directly from authorized records, so hidden arrays do not misleadingly produce zero counts. Audit verification is absent for roles lacking audit permission.
+
+Migration creates a primary site from each existing study's recorded metadata and appends an explicit system audit event. It preserves original participant/study/event payloads. Historical participant site linkage resolves to `SITE-{study_id}`; new enrolments store `site_id`. A legacy caller or CSV intake omitting site resolves specifically to the primary site, not whichever site sorts first. Reinitialisation is idempotent. Synthetic monitoring/deviation examples are inserted only during fresh demonstration seeding.
+
+Forecast: posterior `Gamma(0.5 + recent count, rate 0.5 + observed days)` using up to 56 inclusive days. Negative-binomial mass is accumulated in log space to avoid loss when its initial mass underflows. Target probability uses unrounded values for fixed 0.5/0.2 alert boundaries. Count quantiles are nominal 5th/95th percentiles; the numerical loop is bounded at 100,000 counts, with missing bounds explicit. Rate-based dates beyond ten years are null. Neither a missing date nor a quantile limit is silently replaced with a plausible value. This is an O(records + forecast-count range) prototype under the global lock; benchmark/cache before large portfolios.
+
+The forecast evaluation and limitations are preserved in [MASTER_STRATEGY_REVIEW.md](MASTER_STRATEGY_REVIEW.md). The inspection HTML is generated locally from a scoped response, escapes content, contains no session token and is guarded against role switches. It is an operational summary, not a signed regulatory artifact.

@@ -6,6 +6,7 @@ import accounts
 import documents
 import exchange
 import safety_workflow
+import study_operations
 import csv
 import hashlib
 import hmac
@@ -37,10 +38,10 @@ LOCK = threading.RLock()
 SESSIONS = {}
 ATTEMPTS = {}
 ROLES = {
-    'admin': {'label': 'Research administrator', 'name': 'Aditi Sharma', 'scope': None, 'permissions': ['enrol', 'safety', 'report', 'query', 'visit', 'withdraw', 'study', 'settings', 'export', 'audit', 'users', 'document', 'review', 'amend', 'import']},
-    'pi': {'label': 'Principal investigator', 'name': 'Kavya Rao', 'scope': ['AIIA-001', 'AIIA-002'], 'permissions': ['enrol', 'safety', 'report', 'query', 'visit', 'withdraw', 'export', 'audit', 'document', 'amend', 'import']},
-    'coordinator': {'label': 'Study coordinator', 'name': 'Neha Singh', 'scope': ['AIIA-001', 'AIIA-002', 'AIIA-003'], 'permissions': ['enrol', 'safety', 'query', 'visit', 'withdraw', 'document', 'import']},
-    'monitor': {'label': 'Clinical monitor', 'name': 'Arjun Patel', 'scope': ['AIIA-001', 'AIIA-003', 'AIIA-005'], 'permissions': ['query', 'export', 'audit']},
+    'admin': {'label': 'Research administrator', 'name': 'Aditi Sharma', 'scope': None, 'permissions': ['enrol', 'safety', 'report', 'query', 'visit', 'withdraw', 'study', 'settings', 'export', 'audit', 'users', 'document', 'review', 'amend', 'import', 'operations']},
+    'pi': {'label': 'Principal investigator', 'name': 'Kavya Rao', 'scope': ['AIIA-001', 'AIIA-002'], 'permissions': ['enrol', 'safety', 'report', 'query', 'visit', 'withdraw', 'export', 'audit', 'document', 'amend', 'import', 'operations']},
+    'coordinator': {'label': 'Study coordinator', 'name': 'Neha Singh', 'scope': ['AIIA-001', 'AIIA-002', 'AIIA-003'], 'permissions': ['enrol', 'safety', 'query', 'visit', 'withdraw', 'document', 'import', 'operations']},
+    'monitor': {'label': 'Clinical monitor', 'name': 'Arjun Patel', 'scope': ['AIIA-001', 'AIIA-003', 'AIIA-005'], 'permissions': ['query', 'export', 'audit', 'operations']},
     'ethics': {'label': 'Ethics committee', 'name': 'IEC reviewer', 'scope': None, 'permissions': ['audit', 'review']},
     'pv': {'label': 'Pharmacovigilance officer', 'name': 'Meera Iyer', 'scope': None, 'permissions': ['safety', 'report']},
     'leadership': {'label': 'Institutional leadership', 'name': 'Research director', 'scope': None, 'permissions': []},
@@ -125,7 +126,7 @@ def initialize():
     DB.parent.mkdir(parents=True, exist_ok=True)
     with connect() as conn:
         conn.execute('PRAGMA journal_mode=WAL')
-        for table in ['studies', 'participants', 'events', 'queries', 'visits', 'settings', 'users', 'documents', 'amendments', 'imports', 'obligations', 'dictionaries']:
+        for table in ['studies', 'participants', 'events', 'queries', 'visits', 'settings', 'users', 'documents', 'amendments', 'imports', 'obligations', 'dictionaries', 'sites', 'monitoring_visits', 'deviations']:
             conn.execute(f'CREATE TABLE IF NOT EXISTS {table}(id TEXT PRIMARY KEY, data TEXT NOT NULL)')
         conn.executescript('''CREATE TABLE IF NOT EXISTS audit(seq INTEGER PRIMARY KEY AUTOINCREMENT,payload TEXT NOT NULL,prev TEXT NOT NULL,hash TEXT NOT NULL);
         CREATE TRIGGER IF NOT EXISTS audit_no_update BEFORE UPDATE ON audit BEGIN SELECT RAISE(ABORT,'Audit records are append-only'); END;
@@ -135,6 +136,7 @@ def initialize():
         if not DEMO_LOGIN and not any(u['active'] and u['role'] == 'admin' for u in rows(conn, 'users')):
             raise RuntimeError('Set CTMS_ADMIN_PASSWORD (12+ characters) to bootstrap named access when demonstration login is disabled.')
         if conn.execute('SELECT count(*) FROM studies').fetchone()[0]:
+            study_operations.seed(CORE, conn)
             return
         now = utcnow()
         rng = random.Random(26046)
@@ -177,6 +179,7 @@ def initialize():
             sid = ['AIIA-001', 'AIIA-002', 'AIIA-003', 'AIIA-005'][i % 4]
             save(conn, 'queries', {'id': f'DQ-{i:03}', 'study_id': sid, 'field': ['Visit date', 'Batch reference', 'Baseline assessment', 'Consent version'][i % 4], 'message': ['Confirm source visit date', 'Verify formulation batch against log', 'Complete missing baseline assessment', 'Reconcile consent version with protocol'][i % 4], 'status': 'Open', 'opened_at': stamp(now - timedelta(days=i)), 'resolution': ''})
         save(conn, 'settings', {'id': 'alerts', 'enrolment_threshold': 70, 'iec_days': 30, 'query_days': 7})
+        study_operations.seed(CORE, conn, examples=True)
 
 
 class ApiError(Exception):
@@ -331,6 +334,13 @@ def snapshot(conn, role):
                 if hours <= 24:
                     alerts.insert(0, {'level': 'danger', 'title': f'{label} {"overdue" if hours < 0 else "due in " + str(round(hours)) + "h"}', 'detail': f'{e["id"]} · {e["rule"]}', 'study_id': e['study_id'], 'page': 'safety'})
     participant_map = {p['id']: p for p in participants}
+    for query in queries:
+        age = (today - datetime.fromisoformat(query['opened_at'][:10]).date()).days
+        if query['status'] == 'Open' and age >= settings['query_days']:
+            alerts.append({'level': 'warning', 'title': f'Data query open {age} days',
+                           'detail': 'Scoped query requires review' if role_key(role) == 'leadership' else query['id'] + ' · ' + query['field'],
+                           'study_id': query['study_id'], 'page': 'queries',
+                           'rule': f'Open query age ≥ {settings["query_days"]} days', 'owner': 'Data review team'})
     for visit in visits:
         participant = participant_map[visit['participant_id']]
         visit['cancelled'] = bool(not visit['completed_at'] and participant.get('withdrawn_at') and visit['due'] >= participant['withdrawn_at'][:10])
@@ -353,6 +363,9 @@ def snapshot(conn, role):
     result['documents'] = documents.list_documents(CORE, conn, role) if role_key(role) != 'leadership' else []
     result['amendments'] = scoped(rows(conn, 'amendments'), role) if role_key(role) != 'leadership' else []
     result['imports'] = [exchange.summary(j) for j in scoped(rows(conn, 'imports'), role)] if 'import' in role_info(role)['permissions'] else []
+    operations = study_operations.snapshot(CORE, conn, role, studies, participants, events, settings)
+    alerts.extend(operations.pop('operation_alerts'))
+    result.update(operations)
     if role_key(role) == 'leadership':
         result.update(participants=[], visits=[], queries=[], events=[])
     elif role_key(role) == 'ethics':
@@ -487,6 +500,8 @@ class Handler(BaseHTTPRequestHandler):
                         return self.send(200, {'users': [accounts.public(u) for u in rows(conn, 'users')]})
                     if path == '/api/data':
                         return self.send(200, snapshot(conn, role))
+                    if path == '/api/operations/inspection':
+                        return self.send(200, study_operations.inspection(CORE, conn, role, parse_qs(url.query).get('study', [None])[0]))
                     safety_match = re.fullmatch(r'/api/safety/([A-Za-z0-9-]+)/(suggestions|assignees)', path)
                     if safety_match:
                         event_id, action = safety_match.groups()
@@ -530,7 +545,7 @@ class Handler(BaseHTTPRequestHandler):
                         conn.commit()
                         return self.send(200, data, mime, {'Content-Disposition': f'attachment; filename="{filename}"'})
                 raise ApiError(404, 'Endpoint not found.')
-            allowed = {'/': 'index.html', '/index.html': 'index.html', '/app.js': 'app.js', '/workflows.js': 'workflows.js', '/safety.js': 'safety.js', '/style.css': 'style.css', '/favicon.svg': 'favicon.svg'}
+            allowed = {'/': 'index.html', '/index.html': 'index.html', '/app.js': 'app.js', '/workflows.js': 'workflows.js', '/operations.js': 'operations.js', '/safety.js': 'safety.js', '/style.css': 'style.css', '/favicon.svg': 'favicon.svg'}
             if path not in allowed:
                 raise ApiError(404, 'Page not found.')
             file = ROOT / 'public' / allowed[path]
@@ -633,6 +648,9 @@ class Handler(BaseHTTPRequestHandler):
         result = exchange.mutate(CORE, conn, role, path, data, self.mutate)
         if result is not None:
             return result
+        result = study_operations.mutate(CORE, conn, role, path, data)
+        if result is not None:
+            return result
         match = re.fullmatch(r'/api/studies/([A-Za-z0-9-]+)/(setup|activate)', path)
         if match:
             sid, action = match.groups()
@@ -661,6 +679,7 @@ class Handler(BaseHTTPRequestHandler):
                 if blockers:
                     raise ApiError(409, 'Activation blocked: ' + ' '.join(blockers))
                 study.update(status='Recruiting', activated_at=stamp(), activated_by=actor_id(role))
+                study_operations.activate_primary(CORE, conn, role, study, reason)
             study.update(revision=revision + 1, updated_at=stamp())
             save(conn, 'studies', study)
             audit(conn, role, 'STUDY_SETUP_UPDATED' if action == 'setup' else 'STUDY_ACTIVATED', sid, sid, before, study, reason)
@@ -682,7 +701,8 @@ class Handler(BaseHTTPRequestHandler):
             current_consent = s.get('consent_version', s['protocol'])
             if version != current_consent:
                 raise ApiError(409, f'Use current approved consent version {current_consent}.')
-            p = {'id': 'SYN-' + secrets.token_hex(4).upper(), 'study_id': sid, 'age': number(data, 'age', 18, 100), 'sex': choice(data, 'sex', ['F', 'M', 'U']), 'prakriti': choice(data, 'prakriti', ['Vata-Pitta', 'Pitta-Kapha', 'Vata-Kapha', 'Balanced', 'Not assessed']), 'status': 'Enrolled', 'consent': True, 'consent_version': version, 'consent_language': choice(data, 'consent_language', ['English', 'Hindi', 'Marathi']), 'consent_at': stamp(), 'consent_recorder': actor_id(role), 'enrolled_at': stamp(), 'site': s['site']}
+            site = study_operations.resolve_site(CORE, conn, role, sid, data.get('site_id'))
+            p = {'id': 'SYN-' + secrets.token_hex(4).upper(), 'study_id': sid, 'site_id': site['id'], 'age': number(data, 'age', 18, 100), 'sex': choice(data, 'sex', ['F', 'M', 'U']), 'prakriti': choice(data, 'prakriti', ['Vata-Pitta', 'Pitta-Kapha', 'Vata-Kapha', 'Balanced', 'Not assessed']), 'status': 'Enrolled', 'consent': True, 'consent_version': version, 'consent_language': choice(data, 'consent_language', ['English', 'Hindi', 'Marathi']), 'consent_at': stamp(), 'consent_recorder': actor_id(role), 'enrolled_at': stamp(), 'site': site['city']}
             save(conn, 'participants', p)
             for n in [1, 2]:
                 save(conn, 'visits', {'id': p['id'] + f'-V{n}', 'study_id': sid, 'participant_id': p['id'], 'name': f'Follow-up {n}', 'due': (utcnow() + timedelta(days=n * 14)).date().isoformat(), 'completed_at': None})
@@ -718,7 +738,7 @@ class Handler(BaseHTTPRequestHandler):
             save(conn, 'events', e)
             audit(conn, role, 'SAFETY_' + phase.upper() + '_RECORDED', e['id'], e['study_id'], before, e, reason)
             return {'record': e}
-        match = re.fullmatch(r'/api/queries/(DQ-[0-9]+)/resolve', path)
+        match = re.fullmatch(r'/api/queries/(DQ-[A-Za-z0-9]+)/resolve', path)
         if match:
             q = get(conn, 'queries', match[1])
             authorized(role, 'query', q['study_id'])
@@ -764,7 +784,7 @@ class Handler(BaseHTTPRequestHandler):
         if path == '/api/settings':
             authorized(role, 'settings')
             before = get(conn, 'settings', 'alerts')
-            settings = {'id': 'alerts', 'enrolment_threshold': number(data, 'enrolment_threshold', 1, 100), 'iec_days': number(data, 'iec_days', 1, 180), 'query_days': number(data, 'query_days', 1, 90)}
+            settings = {'id': 'alerts', 'enrolment_threshold': number(data, 'enrolment_threshold', 1, 100), 'iec_days': number(data, 'iec_days', 1, 180), 'query_days': number(data, 'query_days', 1, 90), 'monitoring_days': number({**data, 'monitoring_days': data.get('monitoring_days', before.get('monitoring_days', 14))}, 'monitoring_days', 1, 180), 'deviation_days': number({**data, 'deviation_days': data.get('deviation_days', before.get('deviation_days', 7))}, 'deviation_days', 1, 90)}
             save(conn, 'settings', settings)
             audit(conn, role, 'ALERT_SETTINGS_UPDATED', 'alerts', before=before, after=settings, reason='Configured operational thresholds; statutory deadlines unchanged')
             return {'record': settings}
@@ -774,6 +794,7 @@ class Handler(BaseHTTPRequestHandler):
             s = {'id': 'AIIA-' + secrets.token_hex(3).upper(), 'title': text_field(data, 'title', 120), 'condition': text_field(data, 'condition', 100), 'type': choice(data, 'type', ['Observational', 'Compound formulation', 'Single-herb formulation', 'Procedure', 'Whole-system regimen']), 'formulation': text_field(data, 'formulation', 200), 'batch': 'Not assigned', 'target': target, 'status': 'Setup', 'site': choice(data, 'site', ['Delhi', 'Goa', 'Jaipur']), 'pi': 'Not assigned', 'ctri': '', 'registered_at': '', 'iec_expiry': utcnow().date().isoformat(), 'iec_reference': 'Pending approval', 'protocol': '1.0', 'ndct': False, 'safety_hours': 24, 'start': utcnow().date().isoformat(), 'end': (utcnow() + timedelta(days=120)).date().isoformat(), 'created_at': stamp()}
             s.update(consent_version='1.0', iec_approved_at='', iec_expiry='', revision=1)
             save(conn, 'studies', s)
+            study_operations.ensure_site(CORE, conn, s, role)
             audit(conn, role, 'STUDY_CREATED', s['id'], s['id'], after=s, reason='Draft study; enrolment locked pending regulatory review')
             return {'record': s}
         raise ApiError(404, 'Endpoint not found.')

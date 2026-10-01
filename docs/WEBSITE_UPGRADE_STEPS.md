@@ -1,6 +1,6 @@
 # Website upgrades — implementation and walkthrough
 
-Updated 30 September 2026. This register records completed website workflows and remaining institutional acceptance requirements. The current presentation describes demonstrable features in the present tense. External integration, deployment and certification claims require their own evidence.
+Updated 1 October 2026. This register records completed website workflows and remaining institutional acceptance requirements. The current presentation describes demonstrable features in the present tense. External integration, deployment and certification claims require their own evidence.
 
 ## Stage 1 — Study readiness and activation: completed
 
@@ -134,6 +134,21 @@ Use [DEPLOYMENT.md](DEPLOYMENT.md) for exact commands. `ops.py backup` includes 
 
 ## Verification and current handoff
 
-The complete command is `.venv/bin/python tests/run_checks.py --browser`. See [VALIDATION.md](VALIDATION.md) for the latest test count and results. Both browser walkthroughs use temporary databases; their screenshots do not add accounts or amendments to the main demonstration portfolio.
+The complete command is `.venv/bin/python tests/run_checks.py --browser`. See [VALIDATION.md](VALIDATION.md) for the latest test count and results. All three browser walkthroughs use temporary databases; their screenshots do not add test accounts, amendments or operations to the main demonstration portfolio.
 
-The local service is `http://127.0.0.1:8046`. GitHub link supplied: [OMGP1/Anvyaya_2026](https://github.com/OMGP1/Anvyaya_2026). Public hosting has not been provisioned and local changes have not been pushed to that repository. Use a real reachable URL in the PPT only after deployment and signed-out access testing.
+The local service is `http://127.0.0.1:8046`. GitHub: [OMGP1/Anvyaya_2026](https://github.com/OMGP1/Anvyaya_2026). The baseline was published at `ea04d2d9fc172404999f7c166dee75d821a6d951`; subsequent publication needs its own recorded commit. Public hosting has not been provisioned. Use a reachable public URL in the PPT only after deployment and signed-out access testing.
+
+## Stage 8 — Operations & alerts
+
+1. Open **Operations & alerts** as admin, PI, coordinator or monitor. KPI cards show all assigned studies; the study filter and search narrow the tables. Leadership sees aggregates instead of individual operation records.
+2. Inspect the **Alert inbox** and **Configured rules**. Admin can edit recruitment pace, IEC horizon, query age, monitoring horizon and deviation age. Safety clocks and forecast thresholds have separate stated bases.
+3. **Add site**, then **Activate** with a review reason. Activation requires a ready Recruiting study. New-study activation also enables the primary site.
+4. In participant enrolment, select the active site. Study/site membership, readiness, capacity and current consent are checked. Legacy callers/CSV intake without a site use the primary site only.
+5. **Plan monitoring** with a site, monitor, date and scope. On/after that date, **Complete** with findings and reason. Inspect the audit entry; repeat completion is rejected.
+6. **Record deviation** with study/site, optional participant, occurrence, category, owner and reason. Cross-site participants are rejected. **Close** requires corrective/preventive action and a recorded basis.
+7. **Open data query**, then resolve it through **Data quality**. Ageing unresolved queries appear in the inbox.
+8. Inspect the **Enrolment forecast**, trailing-rate comparison and nominal count range. State the constant-rate assumption; the synthetic slowdown scenario exposes its limitations.
+9. Inspect **Formulation and batch context**. Study-level AE counts do not establish participant exposure to that batch.
+10. Filter one study, open **Pre-inspection report**, inspect consent coverage/open work/audit status, then **Download HTML report**. The summary does not certify readiness or verify external approvals.
+
+Screenshots: [desktop](screenshots/11-operations-alerts.png), [mobile](screenshots/12-operations-mobile.png). Evidence and remaining strategy items: [master strategy review](MASTER_STRATEGY_REVIEW.md).

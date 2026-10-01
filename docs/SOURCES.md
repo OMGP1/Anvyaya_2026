@@ -71,3 +71,11 @@ The linked [production gap analysis](PRODUCTION_GAP_ANALYSIS.md) places each sou
 - [MedDRA support documentation](https://www.meddra.org/how-to-use/support-documentation) and [UMC WHODrug Global](https://who-umc.org/whodrug/whodrug-global/what-is-whodrug-global/): distinct terminology purposes, rights and human coding governance.
 - [Waitress documentation](https://docs.pylonsproject.org/projects/waitress/en/stable/) and [Caddy reverse proxy](https://caddyserver.com/docs/caddyfile/directives/reverse_proxy): delivered serving configuration; public DNS/TLS and institutional security acceptance remain separate.
 - [Official HL7 validator release 6.10.4](https://github.com/hapifhir/org.hl7.fhir.core/releases/tag/6.10.4): the pinned tool used for our [FHIR validation evidence](FHIR_VALIDATION.md), including its unresolved warnings and disabled terminology checks.
+
+## Master-strategy review additions — 1 October 2026
+
+- [WHO ICD-11 update, 14 February 2025](https://www.who.int/news/item/14-02-2025-who-releases-2025-update-to-the-international-classification-of-diseases-%28icd-11%29): announces a module for Ayurveda and related traditional medicine. Does not validate an Anvaya mapping or establish ABDM acceptance.
+- [FDA data-mining white paper](https://www.fda.gov/science-research/data-mining/data-mining-fda-white-paper): PRR/report disproportionality context. We retain descriptive study counts because participant exposure and comparable coded-report denominators are absent.
+- [CDISC SDTMIG exposure guidance](https://www.cdisc.org/standards/foundational/sdtmig/sdtmig-v3-3/html): exposure tabulation and derivation metadata; use the agreed release in an actual submission. Configured study formulation is insufficient to create participant exposure facts.
+- [Official CORE CLI](https://github.com/cdisc-org/cdisc-rules-engine/blob/main/docs/cli-reference.md): standards/rule execution and Define-XML input. Tool availability is not evidence that we validated a CDISC package.
+- [Time-dependent Poisson–Gamma recruitment research](https://arxiv.org/abs/2301.03710): method context and changing recruitment rates. Our implemented study-level constant-rate model is simpler; its own synthetic results, including failure under an unforeseen slowdown, are in [MASTER_STRATEGY_REVIEW.md](MASTER_STRATEGY_REVIEW.md).
