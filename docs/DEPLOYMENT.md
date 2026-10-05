@@ -43,7 +43,9 @@ Use one institution-approved host with Docker Compose, persistent storage and a 
 
 The proxy occupies `172.30.46.2` on the isolated backend network. Waitress accepts forwarded client address/protocol headers only from that address; this prevents all users sharing the proxy's login-throttling identity. If the subnet conflicts with the host network, change the Compose subnet/proxy address and the Dockerfile's `--trusted-proxy` value together. Keep the backend isolated and never configure arbitrary client headers as trusted.
 
-The HTTPS configuration has been syntax-validated in Caddy. A real certificate, DNS route and publicly reachable deployment have not been demonstrated here. [Waitress reverse-proxy guidance](https://docs.pylonsproject.org/projects/waitress/en/stable/reverse-proxy.html) and [Caddy automatic HTTPS](https://caddyserver.com/docs/automatic-https) describe the deployment mechanisms.
+The HTTPS configuration has been syntax-validated in Caddy. Separately, the synthetic demonstration is publicly reachable through Render at [anvaya-2026-ctms.onrender.com](https://anvaya-2026-ctms.onrender.com); [anvaya-2026.vercel.app](https://anvaya-2026.vercel.app) is a static entry page that opens that service. Render terminates HTTPS for this demo. [Waitress reverse-proxy guidance](https://docs.pylonsproject.org/projects/waitress/en/stable/reverse-proxy.html) and [Caddy automatic HTTPS](https://caddyserver.com/docs/automatic-https) describe the self-hosted deployment mechanisms.
+
+The public free-tier deployment uses one Waitress process and an ephemeral SQLite file. It can reset on deploy or host replacement and is only for synthetic demonstration data. Institutional use still requires persistent encrypted storage, named access with shared demo login disabled, backups, monitoring, recovery testing and security/privacy acceptance.
 
 ## Configuration reference
 

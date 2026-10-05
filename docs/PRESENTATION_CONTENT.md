@@ -1,6 +1,6 @@
 # ANVAYA — built and tested: presentation content
 
-**Updated:** 1 October 2026. **Problem statement:** SIH 26046. **Deliverable:** six slides of editable content, followed by speaker notes.
+**Updated:** 5 October 2026. **Problem statement:** SIH 26046. **Deliverable:** six slides of editable content, followed by speaker notes.
 
 ## Use this content with the supplied layouts
 
@@ -11,7 +11,8 @@ The architecture and claims match the application and its account, document, exc
 **Links and visual assets**
 
 - **GitHub:** [View repository](https://github.com/OMGP1/Anvyaya_2026). Preserve the repository spelling.
-- **UI Demo:** `[PUBLIC_UI_URL]` — replace with the reachable preview address before submission.
+- **UI Demo:** [anvaya-2026-ctms.onrender.com](https://anvaya-2026-ctms.onrender.com).
+- **Vercel entry:** [anvaya-2026.vercel.app](https://anvaya-2026.vercel.app) — opens the same Render-hosted application.
 - **Screenshots:** [overview](screenshots/02-overview.png), [documents](screenshots/07-documents-amendments.png), [integration](screenshots/08-integration-evidence.png), [coding](screenshots/10-coding-followup.png), [mobile](screenshots/09-integration-mobile.png).
 - **Video:** include a link only if a walkthrough has been uploaded and opens for reviewers.
 
@@ -32,7 +33,7 @@ A working clinical research workspace connecting reviewed evidence, participant 
 - **Category / Theme:** Software · MedTech / BioTech / HealthTech
 - **Team:** [TEAM_NAME] · [TEAM_ID] · [COLLEGE]
 
-**UI Demo:** `[PUBLIC_UI_URL]` · **GitHub:** [View repository](https://github.com/OMGP1/Anvyaya_2026)
+**UI Demo:** [Open ANVAYA](https://anvaya-2026-ctms.onrender.com) · **GitHub:** [View repository](https://github.com/OMGP1/Anvyaya_2026)
 
 **Footer:** Working product demonstration · All study and participant data are synthetic
 
@@ -70,7 +71,7 @@ Site monitoring, deviations and alert rules share one workspace, with a working 
 
 ### Lower right — SOLUTION DELIVERED
 
-**UI Demo:** `[PUBLIC_UI_URL]` · **GitHub:** [View repository](https://github.com/OMGP1/Anvyaya_2026) · **Preview:** embed the overview screenshot
+**UI Demo:** [Open ANVAYA](https://anvaya-2026-ctms.onrender.com) · **GitHub:** [View repository](https://github.com/OMGP1/Anvyaya_2026) · **Preview:** embed the overview screenshot
 
 1. **Study and evidence:** Six readiness checks, versioned documents, independent review and active-study amendments.
 2. **Study operations:** Sites, consent-checked enrolment, monitoring visits, deviations, queries and reconsent.
@@ -286,7 +287,7 @@ Use the template's four reference boxes. Hyperlink the source titles; keep long 
 1. **[S9] Serving and persistence:** [Waitress documentation](https://docs.pylonsproject.org/projects/waitress/en/stable/) and [Python SQLite interface](https://docs.python.org/3/library/sqlite3.html).
 2. **[S10] Partner authentication design:** [OAuth 2.0 client credentials](https://www.rfc-editor.org/rfc/rfc6749#section-4.4) and [SMART Backend Services](https://hl7.org/fhir/smart-app-launch/backend-services.html).
 3. **[S11] Terminology governance:** [MedDRA term-selection guidance](https://files.meddra.org/www/Website%20Files/PtCs/001329_termselptc_r4_26_mar2026%20%281%29.html) and [UMC WHODrug Global](https://who-umc.org/whodrug/whodrug-global/what-is-whodrug-global/).
-4. **[V1] Implementation evidence:** [GitHub repository](https://github.com/OMGP1/Anvyaya_2026) · [Validation record](VALIDATION.md) · UI: `[PUBLIC_UI_URL]`.
+4. **[V1] Implementation evidence:** [GitHub repository](https://github.com/OMGP1/Anvyaya_2026) · [Validation record](VALIDATION.md) · [Live UI](https://anvaya-2026-ctms.onrender.com).
 5. **[R1] Recruitment modelling:** [Time-dependent Poisson–Gamma research](https://arxiv.org/abs/2301.03710) · [Our synthetic evaluation](validation/forecast-evaluation.json). Our model is a simpler study-level prototype.
 
 **Footer:** Development data: generated synthetic studies and participants · Official sources: requirements and standards references
@@ -309,7 +310,7 @@ Use the template's four reference boxes. Hyperlink the source titles; keep long 
 
 ### Slide 3 — approximately 60 seconds
 
-“The implemented core uses HTML, CSS, JavaScript, Python and SQLite. The local demo uses the standard library; the deployment path adds a WSGI adapter, pinned Waitress and an HTTPS reverse-proxy configuration. Creating that configuration does not establish a public deployment. Clinical operations and their audit entries share a transaction.”
+“The implemented core uses HTML, CSS, JavaScript, Python and SQLite. The public synthetic demo runs through the WSGI adapter and pinned Waitress on Render, with HTTPS at the hosting edge. The Vercel URL is a lightweight entry page that opens the same application. Clinical operations and their audit entries share a transaction.”
 
 “Incoming synthetic CSV records are mapped and staged for review. Invalid rows and conflicting source IDs are rejected; safe retries retain the earlier outcome. Commit uses the same enrolment operation as the UI, so an import cannot skip current study or consent gates. Source and row hashes, external IDs and import IDs remain available as provenance. The delivered connector is this bounded CSV workflow; it does not silently merge hospital patient identities or update existing clinical records.”
 
@@ -363,7 +364,7 @@ Use the template's four reference boxes. Hyperlink the source titles; keep long 
 
 | Topic | Supported description | Boundary |
 |---|---|---|
-| Running stack | Browser HTML/CSS/JavaScript, Python, SQLite; optional pinned Waitress with WSGI and HTTPS configuration | React, FastAPI and PostgreSQL are not the running implementation; public deployment remains unestablished |
+| Running stack | Browser HTML/CSS/JavaScript, Python, SQLite and pinned Waitress/WSGI; public synthetic demo on Render with a Vercel entry URL | React, FastAPI and PostgreSQL are not the running implementation; the free demo host is not institutional hosting |
 | Study evidence | Versioned PDF/TXT uploads, checksums, independent review, revision-checked amendments and activation gates | Reviewer records do not independently authenticate CTRI or IEC issuers; no validated electronic signature |
 | Access | Named local accounts, eight roles, managed assignments, password reset and session revocation | Shared login remains a demo mode; institutional SSO/MFA and identity proofing remain onboarding work |
 | Consent | Current-version checks, amendment-triggered reconsent, retained consent history, withdrawal and routine-visit guards | No participant signature ceremony or software proof of informed understanding |
@@ -371,7 +372,7 @@ Use the template's four reference boxes. Hyperlink the source titles; keep long 
 | Audit | Transactional event history, row guards and hash-chain verification | No independent immutable archive or compliance certification |
 | Ingestion | Synthetic CSV mapping/staging, row findings, duplicate/conflict handling, enrolment gates and provenance | No authorised live EDC/HIS feed, universal adapter, fuzzy patient matching or automatic clinical updates |
 | Exchange | Research Bundle JSON, local reference checks, documented base-R4 validation with warnings and DM/AE mapping-preview CSV | Terminology findings remain; no ABDM acceptance or complete SDTM/XPT/Define-XML/ADaM release |
-| Recovery and serving | Verified SQLite backup/restore tools; WSGI/Waitress, container and HTTPS configuration | No demonstrated cloud installation, encrypted backup service, availability target or institutional recovery acceptance |
+| Recovery and serving | Verified SQLite backup/restore tools; WSGI/Waitress; HTTPS public demo deployed on Render | Demo storage is ephemeral; no encrypted backup service, availability target or institutional recovery acceptance |
 | Validation | Documented integration and browser checks; current results in VALIDATION.md | No clinical-system validation, multi-site load benchmark, security certification or recipient acceptance |
 | Impact | Connected records and demonstrated enforcement | No measured savings, clinical benefit, emissions reduction or real-world reporting-time improvement |
 
@@ -393,7 +394,7 @@ Uploaded evidence has a checksum and an attributable reviewer decision. That doe
 
 ## Submission handoff
 
-Replace `[PUBLIC_UI_URL]`, team identifiers and any template identity before submission. The GitHub link is supplied by the team; confirm the intended reviewer can open it in a signed-out browser. A localhost URL is useful for rehearsal but is not a public submission preview.
+Replace team identifiers and any template identity before submission. Use the direct [Render UI](https://anvaya-2026-ctms.onrender.com) as the prototype link; [Vercel](https://anvaya-2026.vercel.app) is a secondary entry link. Both were checked without a signed-in hosting account on 5 October 2026.
 
 Use the existing overview and safety screenshots only when they match the submitted build. The included readiness screenshot was captured from the passing browser workflow. Keep a submitted commit or release reference so reviewers can identify the demonstrated version. Do not add a video link, cloud deployment claim or test count that has not been verified.
 

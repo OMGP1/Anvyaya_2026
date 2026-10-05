@@ -92,6 +92,14 @@ python3 -m venv .venv
 
 Verified: **69 test methods and three browser workflows pass**. See [VALIDATION.md](docs/VALIDATION.md) for dated runtime/container evidence and external standards boundaries. Tests open loopback ports and preserve the main database. Reproduce the synthetic forecast evaluation with `.venv/bin/python scripts/evaluate_forecasts.py`; both stable-rate and slowdown results are reported.
 
+## Live synthetic demo
+
+- **Working application:** [anvaya-2026-ctms.onrender.com](https://anvaya-2026-ctms.onrender.com)
+- **Vercel entry URL:** [anvaya-2026.vercel.app](https://anvaya-2026.vercel.app)
+- **Demo password:** `Demo#26046` after choosing any role
+
+The Vercel page opens the stateful Render service. This public free-tier demo uses synthetic records and ephemeral SQLite storage, so demonstration changes can reset after a deploy or host replacement. It is not an approved store for participant data.
+
 ## Demonstration boundaries
 
 All records and registry references are fictional. Named accounts provide local attribution; neither they nor shared demo roles verify a person’s professional authority or delegation. This installation has not been approved to hold actual participant records; use synthetic data. The app has not been deployed on a compliant cloud or certified against GCP, ISO or DPDP.
@@ -104,4 +112,4 @@ The Docker image uses Waitress. `compose.yaml` adds Caddy HTTPS, private applica
 
 Follow [DEPLOYMENT.md](docs/DEPLOYMENT.md) for exact commands and [WEBSITE_UPGRADE_STEPS.md](docs/WEBSITE_UPGRADE_STEPS.md) for the complete walkthrough. `ops.py` creates verified backup and restore copies without overwriting existing databases.
 
-GitHub link supplied by the team: [OMGP1/Anvyaya_2026](https://github.com/OMGP1/Anvyaya_2026). A public UI URL has not yet been provisioned. Local updates do not imply a GitHub push or public deployment.
+GitHub: [OMGP1/Anvyaya_2026](https://github.com/OMGP1/Anvyaya_2026). The Render and Vercel URLs above were deployed and checked on 5 October 2026.
